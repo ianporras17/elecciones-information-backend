@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: elecciones_db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: elecciones_api
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: 'true'
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    command: >
+      sh -c "
+      set -e;
+      if [ ! -f /app/node_modules/.deps_installed ]; then
+        echo 'Installing dependencies...';
+        npm install;
+        touch /app/node_modules/.deps_installed;
+      fi;
+
+      echo 'Generating Prisma client...';
+      npx prisma generate;
+
+      if [ -d prisma/migrations ] && [ -n \"$(ls -A prisma/migrations 2>/dev/null)\" ]; then
+        echo 'Applying migrations (deploy)...';
+        npx prisma migrate deploy;
+      else
+        echo 'No migrations found yet (prisma/migrations is empty).';
+      fi;
+
+      npm run start:dev
+      "
+
+volumes:
+  pgdata:
+    name: elecciones_pgdata
+  node_modules:
+    name: elecciones_node_modules
