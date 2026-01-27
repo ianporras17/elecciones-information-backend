@@ -9,29 +9,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HealthController = void 0;
+exports.JoinRoomDto = void 0;
 const openapi = require("@nestjs/swagger");
-const common_1 = require("@nestjs/common");
-const health_service_1 = require("./health.service");
-let HealthController = class HealthController {
-    healthService;
-    constructor(healthService) {
-        this.healthService = healthService;
+const class_validator_1 = require("class-validator");
+class JoinRoomDto {
+    accessCode;
+    static _OPENAPI_METADATA_FACTORY() {
+        return { accessCode: { required: true, type: () => String } };
     }
-    ping() {
-        return this.healthService.ping();
-    }
-};
-exports.HealthController = HealthController;
+}
+exports.JoinRoomDto = JoinRoomDto;
 __decorate([
-    (0, common_1.Get)(),
-    openapi.ApiResponse({ status: 200 }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], HealthController.prototype, "ping", null);
-exports.HealthController = HealthController = __decorate([
-    (0, common_1.Controller)('health'),
-    __metadata("design:paramtypes", [health_service_1.HealthService])
-], HealthController);
-//# sourceMappingURL=health.controller.js.map
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], JoinRoomDto.prototype, "accessCode", void 0);
+//# sourceMappingURL=join-room.dto.js.map

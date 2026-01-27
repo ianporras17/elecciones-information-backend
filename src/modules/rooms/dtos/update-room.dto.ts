@@ -1,4 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { RoomStatus } from './create-room.dto';
 
 export class UpdateRoomDto {
   @IsOptional()
@@ -10,6 +11,6 @@ export class UpdateRoomDto {
   description?: string;
 
   @IsOptional()
-  @IsEnum(['ACTIVE', 'INACTIVE'])
-  status?: 'ACTIVE' | 'INACTIVE';
+  @IsEnum(RoomStatus)
+  status?: RoomStatus;
 }
