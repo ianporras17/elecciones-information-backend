@@ -13,7 +13,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     PrismaModule,
     HealthModule,
-    AuthModule, // auth
+    AuthModule,
   ],
 })
 export class AppModule {}
