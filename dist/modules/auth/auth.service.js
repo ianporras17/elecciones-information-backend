@@ -45,7 +45,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const bcrypt = __importStar(require("bcrypt"));
-const prisma_service_1 = require("../database/prisma/prisma.service");
+const prisma_service_1 = require("../../database/prisma/prisma.service");
 const role_enum_1 = require("./role.enum");
 let AuthService = class AuthService {
     prisma;

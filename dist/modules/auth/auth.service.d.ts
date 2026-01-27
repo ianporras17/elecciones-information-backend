@@ -1,4 +1,4 @@
-import { PrismaService } from '../database/prisma/prisma.service';
+import { PrismaService } from '../../database/prisma/prisma.service';
 import { RegisterAdminDto } from './dto/register-admin.dto';
 import { LoginDto } from './dto/login.dto';
 export declare class AuthService {
