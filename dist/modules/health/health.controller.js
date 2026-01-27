@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthController = void 0;
+const openapi = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
 const health_service_1 = require("./health.service");
 let HealthController = class HealthController {
@@ -24,6 +25,7 @@ let HealthController = class HealthController {
 exports.HealthController = HealthController;
 __decorate([
     (0, common_1.Get)(),
+    openapi.ApiResponse({ status: 200 }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)

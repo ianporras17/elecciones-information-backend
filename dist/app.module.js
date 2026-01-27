@@ -12,6 +12,7 @@ const config_1 = require("@nestjs/config");
 const env_validation_1 = require("./config/env.validation");
 const prisma_module_1 = require("./database/prisma/prisma.module");
 const health_module_1 = require("./modules/health/health.module");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -24,6 +25,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             prisma_module_1.PrismaModule,
             health_module_1.HealthModule,
+            auth_module_1.AuthModule,
         ],
     })
 ], AppModule);
