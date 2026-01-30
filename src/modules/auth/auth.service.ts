@@ -3,24 +3,91 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../database/prisma/prisma.service';
 import { RegisterAdminDto } from './dto/register-admin.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { RoleEnum } from './role.enum';
+import { PasswordUtil } from '../../utils/password.util';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Registro de administrador (WEB)
+   * Registro de administrador
    */
   async registerAdmin(dto: RegisterAdminDto) {
-    // Verificar duplicados
+    await this.ensureUserDoesNotExist(dto.email, dto.username);
+
+    const passwordHash = await PasswordUtil.hash(dto.password);
+
+    await this.prisma.user.create({
+      data: {
+        name: dto.username,
+        email: dto.email,
+        passwordHash,
+        role: RoleEnum.ADMIN,
+      },
+    });
+
+    return { message: 'Administrador registrado correctamente' };
+  }
+
+  /**
+   * Registro de usuario (mobile)
+   */
+  async registerUser(dto: RegisterUserDto) {
+    await this.ensureUserDoesNotExist(dto.email, dto.name);
+
+    const passwordHash = await PasswordUtil.hash(dto.password);
+
+    await this.prisma.user.create({
+      data: {
+        name: dto.name,
+        email: dto.email,
+        passwordHash,
+        role: RoleEnum.USER,
+      },
+    });
+
+    return { message: 'Usuario registrado correctamente' };
+  }
+
+  /**
+   * Login administrador
+   */
+  async loginAdmin(dto: LoginDto) {
+    const user = await this.validateUser(dto);
+
+    if (user.role !== RoleEnum.ADMIN) {
+      throw new UnauthorizedException('Acceso no autorizado');
+    }
+
+    return this.buildLoginResponse(user);
+  }
+
+  /**
+   * Login usuario (mobile)
+   */
+  async loginUser(dto: LoginDto) {
+    const user = await this.validateUser(dto);
+
+    if (user.role !== RoleEnum.USER) {
+      throw new UnauthorizedException('Acceso no autorizado');
+    }
+
+    return this.buildLoginResponse(user);
+  }
+
+  /**
+   * Métodos privados
+   */
+
+  private async ensureUserDoesNotExist(email: string, name: string) {
     const existingUser = await this.prisma.user.findFirst({
       where: {
-        OR: [{ email: dto.email }, { name: dto.username }],
+        OR: [{ email }, { name }],
       },
     });
 
@@ -29,28 +96,9 @@ export class AuthService {
         'El correo o nombre de usuario ya está registrado',
       );
     }
-
-    // Hash seguro de contraseña
-    const passwordHash = await bcrypt.hash(dto.password, 10);
-
-    // Crear usuario ADMIN usando enum RoleEnum
-    await this.prisma.user.create({
-      data: {
-        name: dto.username,
-        email: dto.email,
-        passwordHash,
-        role: RoleEnum.ADMIN, 
-      },
-    });
-
-    // No se retorna información sensible
-    return { message: 'Administrador registrado correctamente' };
   }
 
-  /**
-   * Login administrador (WEB)
-   */
-  async loginAdmin(dto: LoginDto) {
+  private async validateUser(dto: LoginDto) {
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [{ email: dto.identifier }, { name: dto.identifier }],
@@ -61,8 +109,7 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    // Comparar contraseña
-    const passwordValid = await bcrypt.compare(
+    const passwordValid = await PasswordUtil.compare(
       dto.password,
       user.passwordHash,
     );
@@ -71,16 +118,15 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    // Verificar rol ADMIN usando enum RoleEnum
-    if (user.role !== RoleEnum.ADMIN) {
-      throw new UnauthorizedException('Acceso no autorizado');
-    }
+    return user;
+  }
 
-    // 
+  private buildLoginResponse(user: any) {
     return {
       message: 'Login exitoso',
       user: {
         id: user.id,
+        name: user.name,
         email: user.email,
         role: user.role,
       },

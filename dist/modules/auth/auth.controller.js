@@ -17,28 +17,51 @@ const openapi = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const register_admin_dto_1 = require("./dto/register-admin.dto");
+const register_user_dto_1 = require("./dto/register-user.dto");
 const login_dto_1 = require("./dto/login.dto");
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
         this.authService = authService;
     }
-    register(dto) {
+    registerAdmin(dto) {
         return this.authService.registerAdmin(dto);
     }
-    login(dto) {
+    loginAdmin(dto) {
         return this.authService.loginAdmin(dto);
+    }
+    registerUser(dto) {
+        return this.authService.registerUser(dto);
+    }
+    loginUser(dto) {
+        return this.authService.loginUser(dto);
     }
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Post)('register'),
+    (0, common_1.Post)('register/admin'),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [register_admin_dto_1.RegisterAdminDto]),
     __metadata("design:returntype", void 0)
-], AuthController.prototype, "register", null);
+], AuthController.prototype, "registerAdmin", null);
+__decorate([
+    (0, common_1.Post)('login/admin'),
+    openapi.ApiResponse({ status: 201 }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [login_dto_1.LoginDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "loginAdmin", null);
+__decorate([
+    (0, common_1.Post)('register'),
+    openapi.ApiResponse({ status: 201 }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [register_user_dto_1.RegisterUserDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "registerUser", null);
 __decorate([
     (0, common_1.Post)('login'),
     openapi.ApiResponse({ status: 201 }),
@@ -46,7 +69,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [login_dto_1.LoginDto]),
     __metadata("design:returntype", void 0)
-], AuthController.prototype, "login", null);
+], AuthController.prototype, "loginUser", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
