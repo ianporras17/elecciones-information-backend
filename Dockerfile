@@ -3,7 +3,9 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production || npm install --only=production
+
+# Instala todas las dependencias para poder compilar
+RUN npm ci || npm install
 
 COPY . .
 
