@@ -1,7 +1,12 @@
 FROM node:20-alpine
+
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm ci || npm install
+RUN npm ci --only=production || npm install --only=production
+
 COPY . .
+
 EXPOSE 3000
-CMD ["npm", "run", "start:dev"]
+
+CMD ["npm", "run", "start:prod"]
