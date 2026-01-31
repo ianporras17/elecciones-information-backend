@@ -236,7 +236,10 @@ docker compose down
 ### Reset total (borra DB/volumen)
 ```bash
 docker compose down --volumes
-docker compose up -d --build --force-recreate
+docker compose down --rmi all -v --remove-orphans 
+
+docker system prune -af --volumes 
+
 ```
 
 ---
