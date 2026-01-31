@@ -1,17 +1,24 @@
-FROM node:20-alpine
-
+# build
+FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-
-# Instala todas las dependencias para poder compilar
-RUN npm ci || npm install
-
+RUN npm ci
 COPY . .
-
-# Compilar el proyecto NestJS
 RUN npm run build
 
-EXPOSE 3000
+# runtime
+FROM node:20-alpine
+WORKDIR /app
 
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+
+# Aplicar migraciones de Prisma
+RUN npx prisma migrate deploy
+
+EXPOSE 3000
 CMD ["npm", "run", "start:prod"]
