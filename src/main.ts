@@ -6,9 +6,14 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Habilitar CORS para frontend (Vite)
+  // Habilitar CORS para frontend (Vite) y Expo
   app.enableCors({
-    origin: 'http://localhost:5173', // frontend
+    origin: [
+      'http://localhost:5173', // Vite
+      'http://localhost:8081', // Expo Web
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:19006',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   });
