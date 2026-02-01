@@ -18,28 +18,43 @@ let RoomsDao = class RoomsDao {
         this.prisma = prisma;
     }
     findByAccessCode(code) {
-        return this.prisma.room.findUnique({
-            where: { accessCode: code },
-        });
+        return this.prisma.room.findUnique({ where: { accessCode: code } });
     }
     findById(id) {
-        return this.prisma.room.findUnique({
-            where: { id },
-        });
+        return this.prisma.room.findUnique({ where: { id } });
     }
     findAll() {
-        return this.prisma.room.findMany({
-            orderBy: { createdAt: 'desc' },
+        return this.prisma.room.findMany({ orderBy: { createdAt: 'desc' } });
+    }
+    createWithCreator(data, creatorId) {
+        return this.prisma.room.create({
+            data: {
+                ...data,
+                members: {
+                    create: {
+                        user: { connect: { id: creatorId } },
+                        role: 'ADMIN',
+                    },
+                },
+            },
         });
     }
-    create(data) {
-        return this.prisma.room.create({ data });
+    upsertMember(roomId, userId) {
+        return this.prisma.roomMember.upsert({
+            where: { roomId_userId: { roomId, userId } },
+            update: {},
+            create: { roomId, userId, role: 'MEMBER' },
+        });
+    }
+    listMembers(roomId) {
+        return this.prisma.roomMember.findMany({
+            where: { roomId },
+            include: { user: { select: { id: true, name: true, email: true } } },
+            orderBy: { joinedAt: 'asc' },
+        });
     }
     update(id, data) {
-        return this.prisma.room.update({
-            where: { id },
-            data,
-        });
+        return this.prisma.room.update({ where: { id }, data });
     }
 };
 exports.RoomsDao = RoomsDao;

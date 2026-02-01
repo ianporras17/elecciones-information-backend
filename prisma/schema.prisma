@@ -18,6 +18,11 @@ enum Role {
   USER
 }
 
+enum RoomMemberRole {
+  ADMIN
+  MEMBER
+}
+
 model User {
   id           String   @id @default(uuid()) @db.Uuid
   name         String   @db.VarChar(120)
@@ -26,6 +31,7 @@ model User {
   role         Role     @default(USER)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
+  memberships  RoomMember[]
 
   @@map("users")
 }
@@ -35,13 +41,31 @@ model Room {
   id        String   @id @default(uuid()) @db.Uuid
   title     String   @db.VarChar(200)
   accessCode String   @unique
+  description String?  @db.Text
   isActive  Boolean  @default(false) @map("is_active")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   topics    Topic[]
+  members    RoomMember[]
 
   @@map("rooms")
+}
+
+model RoomMember {
+  id        String          @id @default(uuid()) @db.Uuid
+  roomId    String          @map("room_id") @db.Uuid
+  userId    String          @map("user_id") @db.Uuid
+  role      RoomMemberRole  @default(MEMBER)
+  joinedAt  DateTime        @default(now()) @map("joined_at")
+
+  room      Room            @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([roomId])
+  @@index([userId])
+  @@map("room_members")
 }
 
 model Topic {

@@ -47,10 +47,13 @@ const common_1 = require("@nestjs/common");
 const bcrypt = __importStar(require("bcrypt"));
 const prisma_service_1 = require("../../database/prisma/prisma.service");
 const role_enum_1 = require("./role.enum");
+const jwt_1 = require("@nestjs/jwt");
 let AuthService = class AuthService {
     prisma;
-    constructor(prisma) {
+    jwt;
+    constructor(prisma, jwt) {
         this.prisma = prisma;
+        this.jwt = jwt;
     }
     async registerAdmin(dto) {
         const existingUser = await this.prisma.user.findFirst({
@@ -88,10 +91,17 @@ let AuthService = class AuthService {
         if (user.role !== role_enum_1.RoleEnum.ADMIN) {
             throw new common_1.UnauthorizedException('Acceso no autorizado');
         }
+        const access_token = await this.jwt.signAsync({
+            sub: user.id,
+            email: user.email,
+            role: user.role,
+            name: user.name,
+        });
         return {
-            message: 'Login exitoso',
+            access_token,
             user: {
                 id: user.id,
+                name: user.name,
                 email: user.email,
                 role: user.role,
             },
@@ -101,6 +111,7 @@ let AuthService = class AuthService {
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        jwt_1.JwtService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

@@ -33,7 +33,7 @@ let RoomsService = class RoomsService {
             throw new common_1.NotFoundException('Sala no existe');
         return room;
     }
-    async create(dto) {
+    async create(dto, creatorId) {
         let code = '';
         while (true) {
             code = this.generateAccessCode();
@@ -41,23 +41,31 @@ let RoomsService = class RoomsService {
             if (!found)
                 break;
         }
-        return this.roomsDao.create({
+        return this.roomsDao.createWithCreator({
             title: dto.name,
+            description: dto.description ?? null,
             accessCode: code,
             isActive: dto.status === create_room_dto_1.RoomStatus.ACTIVE,
-        });
+        }, creatorId);
     }
     update(id, dto) {
         return this.roomsDao.update(id, {
             ...(dto.name !== undefined ? { title: dto.name } : {}),
+            ...(dto.description !== undefined ? { description: dto.description } : {}),
             ...(dto.status !== undefined ? { isActive: dto.status === create_room_dto_1.RoomStatus.ACTIVE } : {}),
         });
     }
-    async join(accessCode) {
+    async join(accessCode, userId) {
         const room = await this.roomsDao.findByAccessCode(accessCode);
         if (!room)
             throw new common_1.NotFoundException('Código inválido');
+        if (!room.isActive)
+            throw new common_1.ForbiddenException('La sala está inactiva');
+        await this.roomsDao.upsertMember(room.id, userId);
         return room;
+    }
+    members(roomId) {
+        return this.roomsDao.listMembers(roomId);
     }
 };
 exports.RoomsService = RoomsService;

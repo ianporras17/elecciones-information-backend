@@ -8,9 +8,10 @@ export declare class AuthController {
         message: string;
     }>;
     login(dto: LoginDto): Promise<{
-        message: string;
+        access_token: string;
         user: {
             id: string;
+            name: string;
             email: string;
             role: "ADMIN";
         };

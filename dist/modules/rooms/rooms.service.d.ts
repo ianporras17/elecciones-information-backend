@@ -6,6 +6,7 @@ export declare class RoomsService {
     constructor(roomsDao: RoomsDao);
     private generateAccessCode;
     findAll(): Promise<{
+        description: string | null;
         title: string;
         id: string;
         createdAt: Date;
@@ -14,6 +15,7 @@ export declare class RoomsService {
         isActive: boolean;
     }[]>;
     findById(id: string): Promise<{
+        description: string | null;
         title: string;
         id: string;
         createdAt: Date;
@@ -21,7 +23,8 @@ export declare class RoomsService {
         accessCode: string;
         isActive: boolean;
     }>;
-    create(dto: CreateRoomDto): Promise<{
+    create(dto: CreateRoomDto, creatorId: string): Promise<{
+        description: string | null;
         title: string;
         id: string;
         createdAt: Date;
@@ -30,6 +33,7 @@ export declare class RoomsService {
         isActive: boolean;
     }>;
     update(id: string, dto: UpdateRoomDto): import("@prisma/client").Prisma.Prisma__RoomClient<{
+        description: string | null;
         title: string;
         id: string;
         createdAt: Date;
@@ -37,7 +41,8 @@ export declare class RoomsService {
         accessCode: string;
         isActive: boolean;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
-    join(accessCode: string): Promise<{
+    join(accessCode: string, userId: string): Promise<{
+        description: string | null;
         title: string;
         id: string;
         createdAt: Date;
@@ -45,4 +50,17 @@ export declare class RoomsService {
         accessCode: string;
         isActive: boolean;
     }>;
+    members(roomId: string): import("@prisma/client").Prisma.PrismaPromise<({
+        user: {
+            email: string;
+            id: string;
+            name: string;
+        };
+    } & {
+        id: string;
+        role: import("@prisma/client").$Enums.RoomMemberRole;
+        joinedAt: Date;
+        userId: string;
+        roomId: string;
+    })[]>;
 }

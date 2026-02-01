@@ -19,6 +19,7 @@ const rooms_service_1 = require("./rooms.service");
 const create_room_dto_1 = require("./dtos/create-room.dto");
 const update_room_dto_1 = require("./dtos/update-room.dto");
 const join_room_dto_1 = require("./dtos/join-room.dto");
+const passport_1 = require("@nestjs/passport");
 let RoomsController = class RoomsController {
     roomsService;
     constructor(roomsService) {
@@ -30,14 +31,17 @@ let RoomsController = class RoomsController {
     findById(id) {
         return this.roomsService.findById(id);
     }
-    create(dto) {
-        return this.roomsService.create(dto);
+    create(dto, req) {
+        return this.roomsService.create(dto, req.user.id);
     }
     update(id, dto) {
         return this.roomsService.update(id, dto);
     }
-    join(dto) {
-        return this.roomsService.join(dto.accessCode);
+    join(dto, req) {
+        return this.roomsService.join(dto.accessCode, req.user.id);
+    }
+    members(roomId) {
+        return this.roomsService.members(roomId);
     }
 };
 exports.RoomsController = RoomsController;
@@ -60,8 +64,9 @@ __decorate([
     (0, common_1.Post)(),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_room_dto_1.CreateRoomDto]),
+    __metadata("design:paramtypes", [create_room_dto_1.CreateRoomDto, Object]),
     __metadata("design:returntype", void 0)
 ], RoomsController.prototype, "create", null);
 __decorate([
@@ -77,12 +82,22 @@ __decorate([
     (0, common_1.Post)('join'),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [join_room_dto_1.JoinRoomDto]),
+    __metadata("design:paramtypes", [join_room_dto_1.JoinRoomDto, Object]),
     __metadata("design:returntype", void 0)
 ], RoomsController.prototype, "join", null);
+__decorate([
+    (0, common_1.Get)(':id/members'),
+    openapi.ApiResponse({ status: 200, type: [Object] }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], RoomsController.prototype, "members", null);
 exports.RoomsController = RoomsController = __decorate([
     (0, common_1.Controller)('rooms'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     __metadata("design:paramtypes", [rooms_service_1.RoomsService])
 ], RoomsController);
 //# sourceMappingURL=rooms.controller.js.map

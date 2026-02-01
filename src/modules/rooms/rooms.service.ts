@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { RoomsDao } from './dao/rooms.dao';
 import { CreateRoomDto, RoomStatus } from './dtos/create-room.dto';
 import { UpdateRoomDto } from './dtos/update-room.dto';
@@ -24,7 +24,7 @@ export class RoomsService {
     return room;
   }
 
-  async create(dto: CreateRoomDto) {
+  async create(dto: CreateRoomDto, creatorId: string) {
     let code = '';
     while (true) {
       code = this.generateAccessCode();
@@ -32,23 +32,36 @@ export class RoomsService {
       if (!found) break;
     }
 
-    return this.roomsDao.create({
-      title: dto.name,
-      accessCode: code,
-      isActive: dto.status === RoomStatus.ACTIVE,
-    });
+    return this.roomsDao.createWithCreator(
+      {
+        title: dto.name,
+        description: dto.description ?? null,
+        accessCode: code,
+        isActive: dto.status === RoomStatus.ACTIVE,
+      },
+      creatorId,
+    );
   }
 
   update(id: string, dto: UpdateRoomDto) {
     return this.roomsDao.update(id, {
       ...(dto.name !== undefined ? { title: dto.name } : {}),
+      ...(dto.description !== undefined ? { description: dto.description } : {}),
       ...(dto.status !== undefined ? { isActive: dto.status === RoomStatus.ACTIVE } : {}),
     });
   }
 
-  async join(accessCode: string) {
+  async join(accessCode: string, userId: string) {
     const room = await this.roomsDao.findByAccessCode(accessCode);
     if (!room) throw new NotFoundException('Código inválido');
+
+    if (!room.isActive) throw new ForbiddenException('La sala está inactiva');
+
+    await this.roomsDao.upsertMember(room.id, userId);
     return room;
+  }
+
+  members(roomId: string) {
+    return this.roomsDao.listMembers(roomId);
   }
 }

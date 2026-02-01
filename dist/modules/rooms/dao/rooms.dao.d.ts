@@ -6,7 +6,13 @@ export declare class RoomsDao {
     findByAccessCode(code: string): Promise<Room | null>;
     findById(id: string): Promise<Room | null>;
     findAll(): Promise<Room[]>;
-    create(data: Prisma.RoomCreateInput): Prisma.Prisma__RoomClient<{
+    createWithCreator(data: {
+        title: string;
+        description: string | null;
+        accessCode: string;
+        isActive: boolean;
+    }, creatorId: string): Prisma.Prisma__RoomClient<{
+        description: string | null;
         title: string;
         id: string;
         createdAt: Date;
@@ -14,7 +20,28 @@ export declare class RoomsDao {
         accessCode: string;
         isActive: boolean;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+    upsertMember(roomId: string, userId: string): Prisma.Prisma__RoomMemberClient<{
+        id: string;
+        role: import("@prisma/client").$Enums.RoomMemberRole;
+        joinedAt: Date;
+        userId: string;
+        roomId: string;
+    }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+    listMembers(roomId: string): Prisma.PrismaPromise<({
+        user: {
+            email: string;
+            id: string;
+            name: string;
+        };
+    } & {
+        id: string;
+        role: import("@prisma/client").$Enums.RoomMemberRole;
+        joinedAt: Date;
+        userId: string;
+        roomId: string;
+    })[]>;
     update(id: string, data: Prisma.RoomUpdateInput): Prisma.Prisma__RoomClient<{
+        description: string | null;
         title: string;
         id: string;
         createdAt: Date;

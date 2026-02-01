@@ -31,9 +31,9 @@ export declare class TopicsService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        roomId: string;
         content: string | null;
         order: number;
-        roomId: string;
     })[]>;
     get(id: string): Promise<{
         resources: {
@@ -60,9 +60,9 @@ export declare class TopicsService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        roomId: string;
         content: string | null;
         order: number;
-        roomId: string;
     }>;
     create(roomId: string, dto: CreateTopicDto): Promise<{
         resources: {
@@ -89,9 +89,9 @@ export declare class TopicsService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        roomId: string;
         content: string | null;
         order: number;
-        roomId: string;
     }>;
     update(id: string, dto: UpdateTopicDto): import("@prisma/client").Prisma.Prisma__TopicClient<{
         resources: {
@@ -118,18 +118,18 @@ export declare class TopicsService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        roomId: string;
         content: string | null;
         order: number;
-        roomId: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
     delete(id: string): import("@prisma/client").Prisma.Prisma__TopicClient<{
         title: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        roomId: string;
         content: string | null;
         order: number;
-        roomId: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
     addResource(topicId: string, dto: ExternalResourceDto): import("@prisma/client").Prisma.Prisma__ExternalResourceClient<{
         description: string | null;

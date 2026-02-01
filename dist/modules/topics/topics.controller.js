@@ -20,6 +20,8 @@ const create_topic_dto_1 = require("./dtos/create-topic.dto");
 const update_topic_dto_1 = require("./dtos/update-topic.dto");
 const external_resource_dto_1 = require("./dtos/external-resource.dto");
 const upsert_topic_content_dto_1 = require("./dtos/upsert-topic-content.dto");
+const common_2 = require("@nestjs/common");
+const passport_1 = require("@nestjs/passport");
 let TopicsController = class TopicsController {
     topicsService;
     constructor(topicsService) {
@@ -132,6 +134,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TopicsController.prototype, "upsertContent", null);
 exports.TopicsController = TopicsController = __decorate([
+    (0, common_2.UseGuards)((0, passport_1.AuthGuard)('jwt')),
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [topics_service_1.TopicsService])
 ], TopicsController);
