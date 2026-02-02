@@ -22,10 +22,10 @@ export class RoomsController {
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
+  findById(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.roomsService.findById(id);
   }
-
+  
   @Post()
   create(@Body() dto: CreateRoomDto, @Req() req: any) {
     return this.roomsService.create(dto, req.user.id);
