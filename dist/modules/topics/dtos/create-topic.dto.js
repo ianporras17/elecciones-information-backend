@@ -9,18 +9,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateTopicDto = void 0;
+exports.CreateTopicDto = exports.TopicType = void 0;
 const openapi = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
-const external_resource_dto_1 = require("./external-resource.dto");
+const class_validator_2 = require("class-validator");
+var TopicType;
+(function (TopicType) {
+    TopicType["HEALTH"] = "HEALTH";
+    TopicType["WORK"] = "WORK";
+    TopicType["SECURITY"] = "SECURITY";
+    TopicType["EDUCATION"] = "EDUCATION";
+    TopicType["ECONOMY"] = "ECONOMY";
+    TopicType["ENVIRONMENT"] = "ENVIRONMENT";
+    TopicType["OTHER"] = "OTHER";
+})(TopicType || (exports.TopicType = TopicType = {}));
 class CreateTopicDto {
     title;
+    topicType;
     content;
     order;
     resources;
+    candidateId;
+    proposalContent;
     static _OPENAPI_METADATA_FACTORY() {
-        return { title: { required: true, type: () => String, maxLength: 200 }, content: { required: false, type: () => String }, order: { required: false, type: () => Number, minimum: 0 }, resources: { required: false, type: () => [require("./external-resource.dto").ExternalResourceDto] } };
+        return { title: { required: true, type: () => String, maxLength: 200 }, topicType: { required: true, enum: require("./create-topic.dto").TopicType }, content: { required: false, type: () => String }, order: { required: false, type: () => Number, minimum: 0 }, resources: { required: false, type: () => [require("./external-resource.dto").ExternalResourceDto] }, candidateId: { required: false, type: () => String, format: "uuid" }, proposalContent: { required: false, type: () => String } };
     }
 }
 exports.CreateTopicDto = CreateTopicDto;
@@ -30,6 +43,10 @@ __decorate([
     (0, class_validator_1.MaxLength)(200),
     __metadata("design:type", String)
 ], CreateTopicDto.prototype, "title", void 0);
+__decorate([
+    (0, class_validator_2.IsEnum)(TopicType),
+    __metadata("design:type", String)
+], CreateTopicDto.prototype, "topicType", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
@@ -44,8 +61,17 @@ __decorate([
 ], CreateTopicDto.prototype, "order", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.ValidateNested)({ each: true }),
-    (0, class_transformer_1.Type)(() => external_resource_dto_1.ExternalResourceDto),
     __metadata("design:type", Array)
 ], CreateTopicDto.prototype, "resources", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_2.IsUUID)(),
+    __metadata("design:type", String)
+], CreateTopicDto.prototype, "candidateId", void 0);
+__decorate([
+    (0, class_validator_1.ValidateIf)((o) => o.candidateId !== undefined),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateTopicDto.prototype, "proposalContent", void 0);
 //# sourceMappingURL=create-topic.dto.js.map

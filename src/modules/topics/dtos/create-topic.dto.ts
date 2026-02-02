@@ -1,6 +1,17 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, ValidateNested } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, Min, ValidateIf } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsEnum, IsUUID } from 'class-validator';
 import { ExternalResourceDto } from './external-resource.dto';
+
+export enum TopicType {
+  HEALTH = 'HEALTH',
+  WORK = 'WORK',
+  SECURITY = 'SECURITY',
+  EDUCATION = 'EDUCATION',
+  ECONOMY = 'ECONOMY',
+  ENVIRONMENT = 'ENVIRONMENT',
+  OTHER = 'OTHER',
+}
 
 export class CreateTopicDto {
   @IsString()
@@ -8,11 +19,13 @@ export class CreateTopicDto {
   @MaxLength(200)
   title: string;
 
+  @IsEnum(TopicType)
+  topicType: TopicType;
+
   @IsOptional()
   @IsString()
   content?: string;
 
-  // opcional: si no lo mandas, lo calculamos (último order + 1)
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -20,7 +33,14 @@ export class CreateTopicDto {
   order?: number;
 
   @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => ExternalResourceDto)
   resources?: ExternalResourceDto[];
+
+  @IsOptional()
+  @IsUUID()
+  candidateId?: string;
+
+  @ValidateIf((o) => o.candidateId !== undefined)
+  @IsString()
+  @IsNotEmpty()
+  proposalContent?: string;
 }

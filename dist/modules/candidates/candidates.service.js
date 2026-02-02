@@ -9,30 +9,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TournamentsDao = void 0;
+exports.CandidatesService = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../../../database/prisma/prisma.service");
-let TournamentsDao = class TournamentsDao {
-    prisma;
-    constructor(prisma) {
-        this.prisma = prisma;
+const candidates_dao_1 = require("./dao/candidates.dao");
+let CandidatesService = class CandidatesService {
+    dao;
+    constructor(dao) {
+        this.dao = dao;
     }
-    createTournament(data) {
-        return this.prisma.tournament.create({ data });
+    list(roomId) {
+        return this.dao.list(roomId);
     }
-    createMatch(data) {
-        return this.prisma.tournamentMatch.create({ data });
-    }
-    updateMatch(id, winner) {
-        return this.prisma.tournamentMatch.update({
-            where: { id },
-            data: { winner },
-        });
+    async create(roomId, userId, name) {
+        const member = await this.dao.getMembership(roomId, userId);
+        if (!member || member.role !== 'ADMIN') {
+            throw new common_1.ForbiddenException('Solo admin puede crear candidatos');
+        }
+        return this.dao.create(roomId, name.trim());
     }
 };
-exports.TournamentsDao = TournamentsDao;
-exports.TournamentsDao = TournamentsDao = __decorate([
+exports.CandidatesService = CandidatesService;
+exports.CandidatesService = CandidatesService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
-], TournamentsDao);
-//# sourceMappingURL=tournaments.dao.js.map
+    __metadata("design:paramtypes", [candidates_dao_1.CandidatesDao])
+], CandidatesService);
+//# sourceMappingURL=candidates.service.js.map

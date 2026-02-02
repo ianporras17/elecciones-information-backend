@@ -13,6 +13,16 @@ enum ResourceType {
   DOCUMENT
 }
 
+enum TopicType {
+  HEALTH
+  WORK
+  SECURITY
+  EDUCATION
+  ECONOMY
+  ENVIRONMENT
+  OTHER
+}
+
 enum Role {
   ADMIN
   USER
@@ -61,6 +71,7 @@ model Room {
   topics      Topic[]
   members     RoomMember[]
   tournaments Tournament[]
+  candidates  Candidate[]
 
   @@map("rooms")
 }
@@ -85,6 +96,7 @@ model Topic {
   id        String   @id @default(uuid()) @db.Uuid
   roomId    String   @map("room_id") @db.Uuid
   title     String   @db.VarChar(200)
+    topicType TopicType @default(OTHER) @map("topic_type")
   content   String?  @db.Text
   order     Int
   createdAt DateTime @default(now()) @map("created_at")
@@ -94,6 +106,7 @@ model Topic {
   resources   ExternalResource[]
   contents    TopicContent[]
   tournaments Tournament[]
+  proposals   CandidateProposal[]
 
   @@index([roomId])
   @@map("topics")
@@ -172,13 +185,55 @@ model Tournament {
 model TournamentMatch {
   id           String   @id @default(uuid()) @db.Uuid
   tournamentId String   @map("tournament_id") @db.Uuid
-  optionA      String   @map("option_a") @db.Uuid
-  optionB      String   @map("option_b") @db.Uuid
-  winner       String?  @db.Uuid
+
+  optionAId    String   @map("option_a") @db.Uuid
+  optionBId    String   @map("option_b") @db.Uuid
+  winnerId     String?  @map("winner") @db.Uuid
+
+  round        Int      @default(1)
+  order        Int      @default(0)
   createdAt    DateTime @default(now()) @map("created_at")
 
   tournament Tournament @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
 
+  // Relaciones a Candidate (3 relaciones distintas)
+  optionA   Candidate @relation("match_optionA", fields: [optionAId], references: [id])
+  optionB   Candidate @relation("match_optionB", fields: [optionBId], references: [id])
+  winner    Candidate? @relation("match_winner", fields: [winnerId], references: [id])
+
   @@index([tournamentId])
   @@map("tournament_matches")
+}
+
+model Candidate {
+  id        String   @id @default(uuid()) @db.Uuid
+  roomId    String   @map("room_id") @db.Uuid
+  name      String   @db.VarChar(120)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  room           Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  proposals      CandidateProposal[]
+  matchesAsOptionA TournamentMatch[] @relation("match_optionA")
+  matchesAsOptionB TournamentMatch[] @relation("match_optionB")
+  matchesAsWinner  TournamentMatch[] @relation("match_winner")
+
+  @@index([roomId])
+  @@map("candidates")
+}
+
+model CandidateProposal {
+  id          String   @id @default(uuid()) @db.Uuid
+  candidateId String   @map("candidate_id") @db.Uuid
+  topicId     String   @map("topic_id") @db.Uuid
+  content     String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  topic       Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@unique([candidateId, topicId])
+  @@index([topicId])
+  @@map("candidate_proposals")
 }

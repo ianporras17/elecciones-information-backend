@@ -6,7 +6,8 @@ import { HealthModule } from './modules/health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RoomsModule } from './modules/rooms/rooms.module';
 import { TopicsModule } from './modules/topics/topics.module';
-import { TournamentsModule } from './modules/rooms/tournaments.module';
+import { TournamentsModule } from './modules/tournaments/tournaments.module';
+import { CandidatesModule } from './modules/candidates/candidates.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TournamentsModule } from './modules/rooms/tournaments.module';
     RoomsModule,
     TopicsModule,
     TournamentsModule,
+    CandidatesModule
   ],
 })
 export class AppModule {}

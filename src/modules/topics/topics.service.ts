@@ -4,6 +4,7 @@ import { CreateTopicDto } from './dtos/create-topic.dto';
 import { UpdateTopicDto } from './dtos/update-topic.dto';
 import { ExternalResourceDto } from './dtos/external-resource.dto';
 import { UpsertTopicContentDto } from './dtos/upsert-topic-content.dto';
+import { UpsertProposalDto } from './dtos/upsert-proposal.dto';
 
 @Injectable()
 export class TopicsService {
@@ -22,9 +23,11 @@ export class TopicsService {
   async create(roomId: string, dto: CreateTopicDto) {
     const order = dto.order ?? (await this.topicsDao.nextOrder(roomId));
 
-    return this.topicsDao.create({
+    // 1) Crear Topic
+    const created = await this.topicsDao.create({
       room: { connect: { id: roomId } },
       title: dto.title,
+      topicType: dto.topicType, // ✅ NUEVO
       content: dto.content ?? null,
       order,
       resources: dto.resources?.length
@@ -39,11 +42,24 @@ export class TopicsService {
           }
         : undefined,
     });
+
+    // 2) Propuesta inicial opcional (si viene candidateId + proposalContent)
+    if (dto.candidateId && dto.proposalContent) {
+      await this.topicsDao.upsertProposal(
+        created.id,
+        dto.candidateId,
+        dto.proposalContent,
+      );
+    }
+
+    // 3) Devolver topic con proposals incluidas
+    return this.topicsDao.findById(created.id);
   }
 
   update(id: string, dto: UpdateTopicDto) {
     return this.topicsDao.update(id, {
       ...(dto.title !== undefined ? { title: dto.title } : {}),
+      ...(dto.topicType !== undefined ? { topicType: dto.topicType } : {}), 
       ...(dto.content !== undefined ? { content: dto.content } : {}),
       ...(dto.order !== undefined ? { order: dto.order } : {}),
     });
@@ -51,6 +67,10 @@ export class TopicsService {
 
   delete(id: string) {
     return this.topicsDao.delete(id);
+  }
+
+  upsertProposal(topicId: string, dto: UpsertProposalDto) {
+    return this.topicsDao.upsertProposal(topicId, dto.candidateId, dto.content);
   }
 
   addResource(topicId: string, dto: ExternalResourceDto) {

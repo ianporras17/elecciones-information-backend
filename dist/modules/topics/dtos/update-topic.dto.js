@@ -13,12 +13,14 @@ exports.UpdateTopicDto = void 0;
 const openapi = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
+const client_1 = require("@prisma/client");
 class UpdateTopicDto {
     title;
+    topicType;
     content;
     order;
     static _OPENAPI_METADATA_FACTORY() {
-        return { title: { required: false, type: () => String, maxLength: 200 }, content: { required: false, type: () => String }, order: { required: false, type: () => Number, minimum: 0 } };
+        return { title: { required: false, type: () => String, maxLength: 200 }, topicType: { required: false, type: () => Object }, content: { required: false, type: () => String }, order: { required: false, type: () => Number, minimum: 0 } };
     }
 }
 exports.UpdateTopicDto = UpdateTopicDto;
@@ -28,6 +30,11 @@ __decorate([
     (0, class_validator_1.MaxLength)(200),
     __metadata("design:type", String)
 ], UpdateTopicDto.prototype, "title", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(client_1.TopicType),
+    __metadata("design:type", String)
+], UpdateTopicDto.prototype, "topicType", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),

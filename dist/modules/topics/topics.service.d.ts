@@ -3,6 +3,7 @@ import { CreateTopicDto } from './dtos/create-topic.dto';
 import { UpdateTopicDto } from './dtos/update-topic.dto';
 import { ExternalResourceDto } from './dtos/external-resource.dto';
 import { UpsertTopicContentDto } from './dtos/upsert-topic-content.dto';
+import { UpsertProposalDto } from './dtos/upsert-proposal.dto';
 export declare class TopicsService {
     private readonly topicsDao;
     constructor(topicsDao: TopicsDao);
@@ -26,12 +27,26 @@ export declare class TopicsService {
             topicId: string;
             participantId: string;
         }[];
+        proposals: ({
+            candidate: {
+                name: string;
+                id: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            content: string;
+            topicId: string;
+            candidateId: string;
+        })[];
     } & {
         title: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         roomId: string;
+        topicType: import("@prisma/client").$Enums.TopicType;
         content: string | null;
         order: number;
     })[]>;
@@ -55,16 +70,30 @@ export declare class TopicsService {
             topicId: string;
             participantId: string;
         }[];
+        proposals: ({
+            candidate: {
+                name: string;
+                id: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            content: string;
+            topicId: string;
+            candidateId: string;
+        })[];
     } & {
         title: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         roomId: string;
+        topicType: import("@prisma/client").$Enums.TopicType;
         content: string | null;
         order: number;
     }>;
-    create(roomId: string, dto: CreateTopicDto): Promise<{
+    create(roomId: string, dto: CreateTopicDto): Promise<({
         resources: {
             description: string | null;
             type: import("@prisma/client").$Enums.ResourceType;
@@ -84,15 +113,29 @@ export declare class TopicsService {
             topicId: string;
             participantId: string;
         }[];
+        proposals: ({
+            candidate: {
+                name: string;
+                id: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            content: string;
+            topicId: string;
+            candidateId: string;
+        })[];
     } & {
         title: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         roomId: string;
+        topicType: import("@prisma/client").$Enums.TopicType;
         content: string | null;
         order: number;
-    }>;
+    }) | null>;
     update(id: string, dto: UpdateTopicDto): import("@prisma/client").Prisma.Prisma__TopicClient<{
         resources: {
             description: string | null;
@@ -113,12 +156,26 @@ export declare class TopicsService {
             topicId: string;
             participantId: string;
         }[];
+        proposals: ({
+            candidate: {
+                name: string;
+                id: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            content: string;
+            topicId: string;
+            candidateId: string;
+        })[];
     } & {
         title: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         roomId: string;
+        topicType: import("@prisma/client").$Enums.TopicType;
         content: string | null;
         order: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
@@ -128,8 +185,17 @@ export declare class TopicsService {
         createdAt: Date;
         updatedAt: Date;
         roomId: string;
+        topicType: import("@prisma/client").$Enums.TopicType;
         content: string | null;
         order: number;
+    }, never, import("@prisma/client/runtime/library").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
+    upsertProposal(topicId: string, dto: UpsertProposalDto): import("@prisma/client").Prisma.Prisma__CandidateProposalClient<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        content: string;
+        topicId: string;
+        candidateId: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, import("@prisma/client").Prisma.PrismaClientOptions>;
     addResource(topicId: string, dto: ExternalResourceDto): import("@prisma/client").Prisma.Prisma__ExternalResourceClient<{
         description: string | null;

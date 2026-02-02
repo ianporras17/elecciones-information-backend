@@ -9,28 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TournamentsService = void 0;
-const common_1 = require("@nestjs/common");
-const tournaments_dao_1 = require("./dao/tournaments.dao");
-let TournamentsService = class TournamentsService {
-    dao;
-    constructor(dao) {
-        this.dao = dao;
+exports.UpsertProposalDto = void 0;
+const openapi = require("@nestjs/swagger");
+const class_validator_1 = require("class-validator");
+class UpsertProposalDto {
+    candidateId;
+    content;
+    static _OPENAPI_METADATA_FACTORY() {
+        return { candidateId: { required: true, type: () => String, format: "uuid" }, content: { required: true, type: () => String } };
     }
-    startTournament(roomId, topicId, userId) {
-        return this.dao.createTournament({
-            roomId,
-            topicId,
-            userId,
-        });
-    }
-    decide(matchId, winnerId) {
-        return this.dao.updateMatch(matchId, winnerId);
-    }
-};
-exports.TournamentsService = TournamentsService;
-exports.TournamentsService = TournamentsService = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [tournaments_dao_1.TournamentsDao])
-], TournamentsService);
-//# sourceMappingURL=tournaments.service.js.map
+}
+exports.UpsertProposalDto = UpsertProposalDto;
+__decorate([
+    (0, class_validator_1.IsUUID)(),
+    __metadata("design:type", String)
+], UpsertProposalDto.prototype, "candidateId", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], UpsertProposalDto.prototype, "content", void 0);
+//# sourceMappingURL=upsert-proposal.dto.js.map

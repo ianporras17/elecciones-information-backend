@@ -17,19 +17,6 @@ let TopicsDao = class TopicsDao {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    listByRoom(roomId) {
-        return this.prisma.topic.findMany({
-            where: { roomId },
-            orderBy: { order: 'asc' },
-            include: { resources: true, contents: true },
-        });
-    }
-    findById(id) {
-        return this.prisma.topic.findUnique({
-            where: { id },
-            include: { resources: true, contents: true },
-        });
-    }
     async nextOrder(roomId) {
         const last = await this.prisma.topic.findFirst({
             where: { roomId },
@@ -41,14 +28,50 @@ let TopicsDao = class TopicsDao {
     create(data) {
         return this.prisma.topic.create({
             data,
-            include: { resources: true, contents: true },
+            include: {
+                resources: true,
+                contents: true,
+                proposals: { include: { candidate: { select: { id: true, name: true } } } },
+            },
         });
     }
     update(id, data) {
         return this.prisma.topic.update({
             where: { id },
             data,
-            include: { resources: true, contents: true },
+            include: {
+                resources: true,
+                contents: true,
+                proposals: { include: { candidate: { select: { id: true, name: true } } } },
+            },
+        });
+    }
+    listByRoom(roomId) {
+        return this.prisma.topic.findMany({
+            where: { roomId },
+            orderBy: { order: 'asc' },
+            include: {
+                resources: true,
+                contents: true,
+                proposals: { include: { candidate: { select: { id: true, name: true } } } },
+            },
+        });
+    }
+    findById(id) {
+        return this.prisma.topic.findUnique({
+            where: { id },
+            include: {
+                resources: true,
+                contents: true,
+                proposals: { include: { candidate: { select: { id: true, name: true } } } },
+            },
+        });
+    }
+    upsertProposal(topicId, candidateId, content) {
+        return this.prisma.candidateProposal.upsert({
+            where: { candidateId_topicId: { candidateId, topicId } },
+            update: { content },
+            create: { candidateId, topicId, content },
         });
     }
     delete(id) {

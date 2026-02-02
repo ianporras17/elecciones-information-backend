@@ -6,6 +6,8 @@ import { ExternalResourceDto } from './dtos/external-resource.dto';
 import { UpsertTopicContentDto } from './dtos/upsert-topic-content.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { UpsertProposalDto } from './dtos/upsert-proposal.dto';
+
 
 @UseGuards(AuthGuard('jwt'))
 @Controller()
@@ -49,7 +51,10 @@ export class TopicsController {
   updateResource(@Param('id') id: string, @Body() dto: Partial<ExternalResourceDto>) {
     return this.topicsService.updateResource(id, dto);
   }
-
+  @Put('topics/:topicId/proposals')
+  upsertProposal(@Param('topicId') topicId: string, @Body() dto: UpsertProposalDto) {
+    return this.topicsService.upsertProposal(topicId, dto);
+  }
   @Delete('external-resources/:id')
   deleteResource(@Param('id') id: string) {
     return this.topicsService.deleteResource(id);

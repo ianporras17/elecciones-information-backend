@@ -20,6 +20,7 @@ const create_room_dto_1 = require("./dtos/create-room.dto");
 const update_room_dto_1 = require("./dtos/update-room.dto");
 const join_room_dto_1 = require("./dtos/join-room.dto");
 const passport_1 = require("@nestjs/passport");
+const common_2 = require("@nestjs/common");
 let RoomsController = class RoomsController {
     roomsService;
     constructor(roomsService) {
@@ -66,7 +67,7 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':id'),
     openapi.ApiResponse({ status: 200 }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', new common_2.ParseUUIDPipe())),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)

@@ -28,9 +28,10 @@ let TopicsService = class TopicsService {
     }
     async create(roomId, dto) {
         const order = dto.order ?? (await this.topicsDao.nextOrder(roomId));
-        return this.topicsDao.create({
+        const created = await this.topicsDao.create({
             room: { connect: { id: roomId } },
             title: dto.title,
+            topicType: dto.topicType,
             content: dto.content ?? null,
             order,
             resources: dto.resources?.length
@@ -45,16 +46,24 @@ let TopicsService = class TopicsService {
                 }
                 : undefined,
         });
+        if (dto.candidateId && dto.proposalContent) {
+            await this.topicsDao.upsertProposal(created.id, dto.candidateId, dto.proposalContent);
+        }
+        return this.topicsDao.findById(created.id);
     }
     update(id, dto) {
         return this.topicsDao.update(id, {
             ...(dto.title !== undefined ? { title: dto.title } : {}),
+            ...(dto.topicType !== undefined ? { topicType: dto.topicType } : {}),
             ...(dto.content !== undefined ? { content: dto.content } : {}),
             ...(dto.order !== undefined ? { order: dto.order } : {}),
         });
     }
     delete(id) {
         return this.topicsDao.delete(id);
+    }
+    upsertProposal(topicId, dto) {
+        return this.topicsDao.upsertProposal(topicId, dto.candidateId, dto.content);
     }
     addResource(topicId, dto) {
         return this.topicsDao.createResource({

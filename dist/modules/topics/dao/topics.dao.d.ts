@@ -3,64 +3,6 @@ import { Prisma } from '@prisma/client';
 export declare class TopicsDao {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    listByRoom(roomId: string): Prisma.PrismaPromise<({
-        resources: {
-            description: string | null;
-            type: import("@prisma/client").$Enums.ResourceType;
-            title: string;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            order: number;
-            topicId: string;
-            url: string;
-        }[];
-        contents: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            content: string;
-            topicId: string;
-            participantId: string;
-        }[];
-    } & {
-        title: string;
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        roomId: string;
-        content: string | null;
-        order: number;
-    })[]>;
-    findById(id: string): Prisma.Prisma__TopicClient<({
-        resources: {
-            description: string | null;
-            type: import("@prisma/client").$Enums.ResourceType;
-            title: string;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            order: number;
-            topicId: string;
-            url: string;
-        }[];
-        contents: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            content: string;
-            topicId: string;
-            participantId: string;
-        }[];
-    } & {
-        title: string;
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        roomId: string;
-        content: string | null;
-        order: number;
-    }) | null, null, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     nextOrder(roomId: string): Promise<number>;
     create(data: Prisma.TopicCreateInput): Prisma.Prisma__TopicClient<{
         resources: {
@@ -82,12 +24,26 @@ export declare class TopicsDao {
             topicId: string;
             participantId: string;
         }[];
+        proposals: ({
+            candidate: {
+                name: string;
+                id: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            content: string;
+            topicId: string;
+            candidateId: string;
+        })[];
     } & {
         title: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         roomId: string;
+        topicType: import("@prisma/client").$Enums.TopicType;
         content: string | null;
         order: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
@@ -111,14 +67,122 @@ export declare class TopicsDao {
             topicId: string;
             participantId: string;
         }[];
+        proposals: ({
+            candidate: {
+                name: string;
+                id: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            content: string;
+            topicId: string;
+            candidateId: string;
+        })[];
     } & {
         title: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
         roomId: string;
+        topicType: import("@prisma/client").$Enums.TopicType;
         content: string | null;
         order: number;
+    }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+    listByRoom(roomId: string): Prisma.PrismaPromise<({
+        resources: {
+            description: string | null;
+            type: import("@prisma/client").$Enums.ResourceType;
+            title: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            order: number;
+            topicId: string;
+            url: string;
+        }[];
+        contents: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            content: string;
+            topicId: string;
+            participantId: string;
+        }[];
+        proposals: ({
+            candidate: {
+                name: string;
+                id: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            content: string;
+            topicId: string;
+            candidateId: string;
+        })[];
+    } & {
+        title: string;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        roomId: string;
+        topicType: import("@prisma/client").$Enums.TopicType;
+        content: string | null;
+        order: number;
+    })[]>;
+    findById(id: string): Prisma.Prisma__TopicClient<({
+        resources: {
+            description: string | null;
+            type: import("@prisma/client").$Enums.ResourceType;
+            title: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            order: number;
+            topicId: string;
+            url: string;
+        }[];
+        contents: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            content: string;
+            topicId: string;
+            participantId: string;
+        }[];
+        proposals: ({
+            candidate: {
+                name: string;
+                id: string;
+            };
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            content: string;
+            topicId: string;
+            candidateId: string;
+        })[];
+    } & {
+        title: string;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        roomId: string;
+        topicType: import("@prisma/client").$Enums.TopicType;
+        content: string | null;
+        order: number;
+    }) | null, null, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
+    upsertProposal(topicId: string, candidateId: string, content: string): Prisma.Prisma__CandidateProposalClient<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        content: string;
+        topicId: string;
+        candidateId: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     delete(id: string): Prisma.Prisma__TopicClient<{
         title: string;
@@ -126,6 +190,7 @@ export declare class TopicsDao {
         createdAt: Date;
         updatedAt: Date;
         roomId: string;
+        topicType: import("@prisma/client").$Enums.TopicType;
         content: string | null;
         order: number;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;

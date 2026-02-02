@@ -15,7 +15,8 @@ const health_module_1 = require("./modules/health/health.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const rooms_module_1 = require("./modules/rooms/rooms.module");
 const topics_module_1 = require("./modules/topics/topics.module");
-const tournaments_module_1 = require("./modules/rooms/tournaments.module");
+const tournaments_module_1 = require("./modules/tournaments/tournaments.module");
+const candidates_module_1 = require("./modules/candidates/candidates.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -32,6 +33,7 @@ exports.AppModule = AppModule = __decorate([
             rooms_module_1.RoomsModule,
             topics_module_1.TopicsModule,
             tournaments_module_1.TournamentsModule,
+            candidates_module_1.CandidatesModule
         ],
     })
 ], AppModule);

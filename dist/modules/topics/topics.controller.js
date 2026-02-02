@@ -22,6 +22,7 @@ const external_resource_dto_1 = require("./dtos/external-resource.dto");
 const upsert_topic_content_dto_1 = require("./dtos/upsert-topic-content.dto");
 const common_2 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
+const upsert_proposal_dto_1 = require("./dtos/upsert-proposal.dto");
 let TopicsController = class TopicsController {
     topicsService;
     constructor(topicsService) {
@@ -47,6 +48,9 @@ let TopicsController = class TopicsController {
     }
     updateResource(id, dto) {
         return this.topicsService.updateResource(id, dto);
+    }
+    upsertProposal(topicId, dto) {
+        return this.topicsService.upsertProposal(topicId, dto);
     }
     deleteResource(id) {
         return this.topicsService.deleteResource(id);
@@ -116,6 +120,15 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], TopicsController.prototype, "updateResource", null);
+__decorate([
+    (0, common_1.Put)('topics/:topicId/proposals'),
+    openapi.ApiResponse({ status: 200 }),
+    __param(0, (0, common_1.Param)('topicId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, upsert_proposal_dto_1.UpsertProposalDto]),
+    __metadata("design:returntype", void 0)
+], TopicsController.prototype, "upsertProposal", null);
 __decorate([
     (0, common_1.Delete)('external-resources/:id'),
     openapi.ApiResponse({ status: 200 }),
