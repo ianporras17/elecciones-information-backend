@@ -12,52 +12,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoomsService = void 0;
 const common_1 = require("@nestjs/common");
 const rooms_dao_1 = require("./dao/rooms.dao");
-const create_room_dto_1 = require("./dtos/create-room.dto");
 let RoomsService = class RoomsService {
     roomsDao;
     constructor(roomsDao) {
         this.roomsDao = roomsDao;
     }
-    generateAccessCode() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        return Array.from({ length: 6 })
-            .map(() => chars[Math.floor(Math.random() * chars.length)])
-            .join('');
+    async getMyRooms(userId) {
+        return this.roomsDao.findRoomsByUser(userId);
     }
-    findAll() {
-        return this.roomsDao.findAll();
-    }
-    async findById(id) {
-        const room = await this.roomsDao.findById(id);
-        if (!room)
-            throw new common_1.NotFoundException('Sala no existe');
-        return room;
-    }
-    async create(dto) {
-        let code = '';
-        while (true) {
-            code = this.generateAccessCode();
-            const found = await this.roomsDao.findByAccessCode(code);
-            if (!found)
-                break;
-        }
-        return this.roomsDao.create({
-            title: dto.name,
-            accessCode: code,
-            isActive: dto.status === create_room_dto_1.RoomStatus.ACTIVE,
-        });
-    }
-    update(id, dto) {
-        return this.roomsDao.update(id, {
-            ...(dto.name !== undefined ? { title: dto.name } : {}),
-            ...(dto.status !== undefined ? { isActive: dto.status === create_room_dto_1.RoomStatus.ACTIVE } : {}),
-        });
-    }
-    async join(accessCode) {
+    async joinRoom(accessCode, userId) {
         const room = await this.roomsDao.findByAccessCode(accessCode);
-        if (!room)
-            throw new common_1.NotFoundException('Código inválido');
-        return room;
+        if (!room || !room.isActive) {
+            throw new common_1.NotFoundException('Sala no disponible');
+        }
+        const alreadyJoined = await this.roomsDao.isUserInRoom(userId, room.id);
+        if (!alreadyJoined) {
+            await this.roomsDao.addUserToRoom(userId, room.id);
+        }
+        return {
+            id: room.id,
+            title: room.title,
+        };
     }
 };
 exports.RoomsService = RoomsService;

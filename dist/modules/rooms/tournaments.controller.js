@@ -12,41 +12,41 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RoomsController = void 0;
+exports.TournamentsController = void 0;
 const openapi = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
-const rooms_service_1 = require("./rooms.service");
-let RoomsController = class RoomsController {
-    roomsService;
-    constructor(roomsService) {
-        this.roomsService = roomsService;
+const tournaments_service_1 = require("./tournaments.service");
+let TournamentsController = class TournamentsController {
+    service;
+    constructor(service) {
+        this.service = service;
     }
-    getMyRooms(userId) {
-        return this.roomsService.getMyRooms(userId);
+    start(body) {
+        return this.service.startTournament(body.roomId, body.topicId, body.userId);
     }
-    joinRoom(body) {
-        return this.roomsService.joinRoom(body.accessCode, body.userId);
+    decision(body) {
+        return this.service.decide(body.matchId, body.winnerId);
     }
 };
-exports.RoomsController = RoomsController;
+exports.TournamentsController = TournamentsController;
 __decorate([
-    (0, common_1.Get)('my/:userId'),
-    openapi.ApiResponse({ status: 200 }),
-    __param(0, (0, common_1.Param)('userId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], RoomsController.prototype, "getMyRooms", null);
-__decorate([
-    (0, common_1.Post)('join'),
+    (0, common_1.Post)('start'),
     openapi.ApiResponse({ status: 201 }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
-], RoomsController.prototype, "joinRoom", null);
-exports.RoomsController = RoomsController = __decorate([
-    (0, common_1.Controller)('rooms'),
-    __metadata("design:paramtypes", [rooms_service_1.RoomsService])
-], RoomsController);
-//# sourceMappingURL=rooms.controller.js.map
+], TournamentsController.prototype, "start", null);
+__decorate([
+    (0, common_1.Post)('decision'),
+    openapi.ApiResponse({ status: 201 }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], TournamentsController.prototype, "decision", null);
+exports.TournamentsController = TournamentsController = __decorate([
+    (0, common_1.Controller)('tournaments'),
+    __metadata("design:paramtypes", [tournaments_service_1.TournamentsService])
+], TournamentsController);
+//# sourceMappingURL=tournaments.controller.js.map

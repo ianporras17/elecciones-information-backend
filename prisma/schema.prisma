@@ -41,8 +41,8 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  rooms        RoomUser[]
-  tournaments  Tournament[]
+  rooms       RoomUser[]
+  tournaments Tournament[]
 
   @@map("users")
 }
@@ -59,8 +59,8 @@ model Room {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  topics     Topic[]
-  users      RoomUser[]
+  topics      Topic[]
+  users       RoomUser[]
   tournaments Tournament[]
 
   @@map("rooms")
@@ -71,10 +71,10 @@ model Room {
    ========================= */
 
 model RoomUser {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  roomId    String   @map("room_id") @db.Uuid
-  joinedAt  DateTime @default(now()) @map("joined_at")
+  id       String   @id @default(uuid()) @db.Uuid
+  userId   String   @map("user_id") @db.Uuid
+  roomId   String   @map("room_id") @db.Uuid
+  joinedAt DateTime @default(now()) @map("joined_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
@@ -98,9 +98,9 @@ model Topic {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  resources ExternalResource[]
-  contents  TopicContent[]
+  room        Room               @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  resources   ExternalResource[]
+  contents    TopicContent[]
   tournaments Tournament[]
 
   @@index([roomId])
@@ -148,7 +148,7 @@ model ExternalResource {
 }
 
 /* =========================
-   TOURNAMENTS 
+   TOURNAMENTS
    ========================= */
 
 model Tournament {
@@ -160,10 +160,10 @@ model Tournament {
   createdAt DateTime         @default(now()) @map("created_at")
   updatedAt DateTime         @updatedAt @map("updated_at")
 
-  room      Room  @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  topic     Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  matches   TournamentMatch[]
+  room    Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  topic   Topic             @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  user    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matches TournamentMatch[]
 
   @@index([roomId])
   @@index([topicId])
@@ -184,4 +184,3 @@ model TournamentMatch {
   @@index([tournamentId])
   @@map("tournament_matches")
 }
-

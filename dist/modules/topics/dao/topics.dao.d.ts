@@ -28,9 +28,9 @@ export declare class TopicsDao {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        roomId: string;
         content: string | null;
         order: number;
-        roomId: string;
     })[]>;
     findById(id: string): Prisma.Prisma__TopicClient<({
         resources: {
@@ -57,9 +57,9 @@ export declare class TopicsDao {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        roomId: string;
         content: string | null;
         order: number;
-        roomId: string;
     }) | null, null, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     nextOrder(roomId: string): Promise<number>;
     create(data: Prisma.TopicCreateInput): Prisma.Prisma__TopicClient<{
@@ -87,9 +87,9 @@ export declare class TopicsDao {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        roomId: string;
         content: string | null;
         order: number;
-        roomId: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     update(id: string, data: Prisma.TopicUpdateInput): Prisma.Prisma__TopicClient<{
         resources: {
@@ -116,18 +116,18 @@ export declare class TopicsDao {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        roomId: string;
         content: string | null;
         order: number;
-        roomId: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     delete(id: string): Prisma.Prisma__TopicClient<{
         title: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        roomId: string;
         content: string | null;
         order: number;
-        roomId: string;
     }, never, import("@prisma/client/runtime/library").DefaultArgs, Prisma.PrismaClientOptions>;
     createResource(data: Prisma.ExternalResourceCreateInput): Prisma.Prisma__ExternalResourceClient<{
         description: string | null;

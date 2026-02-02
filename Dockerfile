@@ -1,24 +1,18 @@
-# build
-FROM node:20-alpine AS builder
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-# runtime
 FROM node:20-alpine
+
 WORKDIR /app
 
+# Instalar dependencias
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm install
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
+# Copiar código
+COPY . .
 
-# Aplicar migraciones de Prisma
-RUN npx prisma migrate deploy
+# Prisma client (necesario en runtime)
+RUN npx prisma generate
 
 EXPOSE 3000
-CMD ["npm", "run", "start:prod"]
+
+# Modo desarrollo (hot reload, logs claros)
+CMD ["npm", "run", "start:dev"]

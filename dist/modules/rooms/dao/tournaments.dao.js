@@ -9,51 +9,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RoomsDao = void 0;
+exports.TournamentsDao = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../../database/prisma/prisma.service");
-let RoomsDao = class RoomsDao {
+let TournamentsDao = class TournamentsDao {
     prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
-    findById(id) {
-        return this.prisma.room.findUnique({ where: { id } });
+    createTournament(data) {
+        return this.prisma.tournament.create({ data });
     }
-    findByAccessCode(accessCode) {
-        return this.prisma.room.findUnique({ where: { accessCode } });
+    createMatch(data) {
+        return this.prisma.tournamentMatch.create({ data });
     }
-    findRoomsByUser(userId) {
-        return this.prisma.room.findMany({
-            where: {
-                isActive: true,
-                users: {
-                    some: { userId },
-                },
-            },
-            select: {
-                id: true,
-                title: true,
-                isActive: true,
-            },
-        });
-    }
-    addUserToRoom(userId, roomId) {
-        return this.prisma.roomUser.create({
-            data: { userId, roomId },
-        });
-    }
-    isUserInRoom(userId, roomId) {
-        return this.prisma.roomUser.findUnique({
-            where: {
-                userId_roomId: { userId, roomId },
-            },
+    updateMatch(id, winner) {
+        return this.prisma.tournamentMatch.update({
+            where: { id },
+            data: { winner },
         });
     }
 };
-exports.RoomsDao = RoomsDao;
-exports.RoomsDao = RoomsDao = __decorate([
+exports.TournamentsDao = TournamentsDao;
+exports.TournamentsDao = TournamentsDao = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
-], RoomsDao);
-//# sourceMappingURL=rooms.dao.js.map
+], TournamentsDao);
+//# sourceMappingURL=tournaments.dao.js.map
