@@ -9,7 +9,7 @@ export class CreateRoomDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-  
+
   @IsOptional()
   @IsString()
   description?: string;

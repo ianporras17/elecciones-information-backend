@@ -10,6 +10,7 @@ export class AuthController {
 
   /**
    * Registro de administrador (WEB)
+   * POST /auth/register/admin
    */
   @Post('register/admin')
   registerAdmin(@Body() dto: RegisterAdminDto) {
@@ -18,6 +19,7 @@ export class AuthController {
 
   /**
    * Login de administrador (WEB)
+   * POST /auth/login/admin
    */
   @Post('login/admin')
   loginAdmin(@Body() dto: LoginDto) {
@@ -26,6 +28,7 @@ export class AuthController {
 
   /**
    * Registro de usuario (MOBILE)
+   * POST /auth/register
    */
   @Post('register')
   registerUser(@Body() dto: RegisterUserDto) {
@@ -34,6 +37,7 @@ export class AuthController {
 
   /**
    * Login de usuario (MOBILE)
+   * POST /auth/login
    */
   @Post('login')
   loginUser(@Body() dto: LoginDto) {

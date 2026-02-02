@@ -9,13 +9,17 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { RoleEnum } from './role.enum';
 import { PasswordUtil } from '../../utils/password.util';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwt: JwtService,
+  ) {}
 
   /**
-   * Registro de administrador
+   * Registro de administrador (WEB)
    */
   async registerAdmin(dto: RegisterAdminDto) {
     await this.ensureUserDoesNotExist(dto.email, dto.username);
@@ -35,9 +39,10 @@ export class AuthService {
   }
 
   /**
-   * Registro de usuario (mobile)
+   * Registro de usuario (MOBILE)
    */
   async registerUser(dto: RegisterUserDto) {
+    // dto.name (según tu DTO de user)
     await this.ensureUserDoesNotExist(dto.email, dto.name);
 
     const passwordHash = await PasswordUtil.hash(dto.password);
@@ -55,7 +60,7 @@ export class AuthService {
   }
 
   /**
-   * Login administrador
+   * Login administrador (WEB)
    */
   async loginAdmin(dto: LoginDto) {
     const user = await this.validateUser(dto);
@@ -68,7 +73,7 @@ export class AuthService {
   }
 
   /**
-   * Login usuario (mobile)
+   * Login usuario (MOBILE)
    */
   async loginUser(dto: LoginDto) {
     const user = await this.validateUser(dto);
@@ -80,9 +85,9 @@ export class AuthService {
     return this.buildLoginResponse(user);
   }
 
-  /**
-   * Métodos privados
-   */
+  /* =========================
+     Métodos privados
+     ========================= */
 
   private async ensureUserDoesNotExist(email: string, name: string) {
     const existingUser = await this.prisma.user.findFirst({
@@ -121,9 +126,16 @@ export class AuthService {
     return user;
   }
 
-  private buildLoginResponse(user: any) {
+  private async buildLoginResponse(user: any) {
+    const access_token = await this.jwt.signAsync({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      name: user.name,
+    });
+
     return {
-      message: 'Login exitoso',
+      access_token,
       user: {
         id: user.id,
         name: user.name,

@@ -4,7 +4,10 @@ import { CreateTopicDto } from './dtos/create-topic.dto';
 import { UpdateTopicDto } from './dtos/update-topic.dto';
 import { ExternalResourceDto } from './dtos/external-resource.dto';
 import { UpsertTopicContentDto } from './dtos/upsert-topic-content.dto';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller()
 export class TopicsController {
   constructor(private readonly topicsService: TopicsService) {}

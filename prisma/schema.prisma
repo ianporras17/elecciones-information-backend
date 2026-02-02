@@ -7,10 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/* =========================
-   ENUMS
-   ========================= */
-
 enum ResourceType {
   LINK
   VIDEO
@@ -32,6 +28,11 @@ enum TournamentStatus {
    USERS
    ========================= */
 
+enum RoomMemberRole {
+  ADMIN
+  MEMBER
+}
+
 model User {
   id           String   @id @default(uuid()) @db.Uuid
   name         String   @db.VarChar(120)
@@ -40,54 +41,44 @@ model User {
   role         Role     @default(USER)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
-
-  rooms       RoomUser[]
   tournaments Tournament[]
+  memberships  RoomMember[]
 
   @@map("users")
 }
 
-/* =========================
-   ROOMS
-   ========================= */
 
 model Room {
-  id         String   @id @default(uuid()) @db.Uuid
-  title      String   @db.VarChar(200)
-  accessCode String   @unique @db.VarChar(10) @map("access_code")
-  isActive   Boolean  @default(false) @map("is_active")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(uuid()) @db.Uuid
+  title     String   @db.VarChar(200)
+  accessCode String   @unique
+  description String?  @db.Text
+  isActive  Boolean  @default(false) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  topics      Topic[]
-  users       RoomUser[]
+  topics    Topic[]
+  members    RoomMember[]
   tournaments Tournament[]
 
   @@map("rooms")
 }
 
-/* =========================
-   USER ↔ ROOM (MEMBERSHIP)
-   ========================= */
+model RoomMember {
+  id        String          @id @default(uuid()) @db.Uuid
+  roomId    String          @map("room_id") @db.Uuid
+  userId    String          @map("user_id") @db.Uuid
+  role      RoomMemberRole  @default(MEMBER)
+  joinedAt  DateTime        @default(now()) @map("joined_at")
 
-model RoomUser {
-  id       String   @id @default(uuid()) @db.Uuid
-  userId   String   @map("user_id") @db.Uuid
-  roomId   String   @map("room_id") @db.Uuid
-  joinedAt DateTime @default(now()) @map("joined_at")
+  room      Room            @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, roomId])
-  @@index([userId])
+  @@unique([roomId, userId])
   @@index([roomId])
-  @@map("room_users")
+  @@index([userId])
+  @@map("room_members")
 }
-
-/* =========================
-   TOPICS
-   ========================= */
 
 model Topic {
   id        String   @id @default(uuid()) @db.Uuid
@@ -98,9 +89,9 @@ model Topic {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  room        Room               @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  resources   ExternalResource[]
-  contents    TopicContent[]
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  resources ExternalResource[]
+  contents  TopicContent[]
   tournaments Tournament[]
 
   @@index([roomId])
@@ -108,7 +99,7 @@ model Topic {
 }
 
 /* =========================
-   CONTENT BY PARTICIPANT
+   CONTENIDO POR TEMA Y PARTICIPANTE
    ========================= */
 
 model TopicContent {
@@ -119,7 +110,7 @@ model TopicContent {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topic         Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   @@unique([topicId, participantId])
   @@index([topicId])
@@ -141,7 +132,7 @@ model ExternalResource {
   createdAt   DateTime     @default(now()) @map("created_at")
   updatedAt   DateTime     @updatedAt @map("updated_at")
 
-  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topic       Topic        @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   @@index([topicId])
   @@map("external_resources")
