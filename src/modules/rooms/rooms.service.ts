@@ -51,6 +51,10 @@ export class RoomsService {
     });
   }
 
+  myRooms(userId: string) {
+    return this.roomsDao.listRoomsForUser(userId);
+  }
+
   async join(accessCode: string, userId: string) {
     const room = await this.roomsDao.findByAccessCode(accessCode);
     if (!room) throw new NotFoundException('Código inválido');

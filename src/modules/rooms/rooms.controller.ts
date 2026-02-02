@@ -35,6 +35,11 @@ export class RoomsController {
     return this.roomsService.join(dto.accessCode, req.user.id);
   }
 
+  @Get('me')
+  myRooms(@Req() req: any) {
+    return this.roomsService.myRooms(req.user.id);
+  }
+
   @Get(':id/members')
   members(@Param('id') roomId: string) {
     return this.roomsService.members(roomId);

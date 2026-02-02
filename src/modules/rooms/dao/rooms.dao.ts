@@ -35,6 +35,25 @@ export class RoomsDao {
     });
   }
 
+  listRoomsForUser(userId: string) {
+    return this.prisma.room.findMany({
+      where: {
+        members: { some: { userId } },
+      },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        accessCode: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+
   upsertMember(roomId: string, userId: string) {
     return this.prisma.roomMember.upsert({
       where: { roomId_userId: { roomId, userId } },
