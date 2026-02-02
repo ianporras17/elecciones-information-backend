@@ -4,6 +4,7 @@ import { CreateRoomDto } from './dtos/create-room.dto';
 import { UpdateRoomDto } from './dtos/update-room.dto';
 import { JoinRoomDto } from './dtos/join-room.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ParseUUIDPipe } from '@nestjs/common';
 
 @Controller('rooms')
 @UseGuards(AuthGuard('jwt'))
@@ -13,6 +14,11 @@ export class RoomsController {
   @Get()
   findAll() {
     return this.roomsService.findAll();
+  }
+
+  @Get('me')
+  myRooms(@Req() req: any) {
+    return this.roomsService.myRooms(req.user.id);
   }
 
   @Get(':id')
@@ -33,11 +39,6 @@ export class RoomsController {
   @Post('join')
   join(@Body() dto: JoinRoomDto, @Req() req: any) {
     return this.roomsService.join(dto.accessCode, req.user.id);
-  }
-
-  @Get('me')
-  myRooms(@Req() req: any) {
-    return this.roomsService.myRooms(req.user.id);
   }
 
   @Get(':id/members')

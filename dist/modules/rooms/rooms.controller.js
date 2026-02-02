@@ -28,6 +28,9 @@ let RoomsController = class RoomsController {
     findAll() {
         return this.roomsService.findAll();
     }
+    myRooms(req) {
+        return this.roomsService.myRooms(req.user.id);
+    }
     findById(id) {
         return this.roomsService.findById(id);
     }
@@ -39,9 +42,6 @@ let RoomsController = class RoomsController {
     }
     join(dto, req) {
         return this.roomsService.join(dto.accessCode, req.user.id);
-    }
-    myRooms(req) {
-        return this.roomsService.myRooms(req.user.id);
     }
     members(roomId) {
         return this.roomsService.members(roomId);
@@ -55,6 +55,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], RoomsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('me'),
+    openapi.ApiResponse({ status: 200 }),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], RoomsController.prototype, "myRooms", null);
 __decorate([
     (0, common_1.Get)(':id'),
     openapi.ApiResponse({ status: 200 }),
@@ -90,14 +98,6 @@ __decorate([
     __metadata("design:paramtypes", [join_room_dto_1.JoinRoomDto, Object]),
     __metadata("design:returntype", void 0)
 ], RoomsController.prototype, "join", null);
-__decorate([
-    (0, common_1.Get)('me'),
-    openapi.ApiResponse({ status: 200 }),
-    __param(0, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], RoomsController.prototype, "myRooms", null);
 __decorate([
     (0, common_1.Get)(':id/members'),
     openapi.ApiResponse({ status: 200, type: [Object] }),

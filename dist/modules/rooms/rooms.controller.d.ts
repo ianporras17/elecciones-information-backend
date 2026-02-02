@@ -14,6 +14,15 @@ export declare class RoomsController {
         accessCode: string;
         isActive: boolean;
     }[]>;
+    myRooms(req: any): import("@prisma/client").Prisma.PrismaPromise<{
+        description: string | null;
+        title: string;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        accessCode: string;
+        isActive: boolean;
+    }[]>;
     findById(id: string): Promise<{
         description: string | null;
         title: string;
@@ -50,15 +59,6 @@ export declare class RoomsController {
         accessCode: string;
         isActive: boolean;
     }>;
-    myRooms(req: any): import("@prisma/client").Prisma.PrismaPromise<{
-        description: string | null;
-        title: string;
-        id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        accessCode: string;
-        isActive: boolean;
-    }[]>;
     members(roomId: string): import("@prisma/client").Prisma.PrismaPromise<({
         user: {
             email: string;
